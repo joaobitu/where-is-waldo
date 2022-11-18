@@ -23,7 +23,7 @@ export const Leaderboard = (props) => {
   };
 
   return (
-    <div className="leaderboard-modal">
+    <div className="leaderboard-modal" style={{ display: "none" }}>
       <input
         placeholder="name"
         onChange={(e) => props.newUser(e.target.value)}

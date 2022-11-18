@@ -10,7 +10,11 @@ function App() {
   const [newUser, setNewUser] = useState("");
   const [count, setCount] = useState(0);
   const [clickedX, setClickedX] = useState("");
+  const [clickedXAbsolute, setClickedXAbsolute] = useState("");
   const [clickedY, setClickedY] = useState("");
+  const [clickedYAbsolute, setClickedYAbsolute] = useState("");
+  const [display, setDisplay] = useState("none");
+  const [options, setOptions] = useState(["waldo", "odlaw", "wizard"]);
 
   useEffect(() => {
     const timer = () => {
@@ -39,23 +43,31 @@ function App() {
     getDB();
   }, []);
 
+  const verifyIsThere = (x1, y1, x2, y2) => {
+    if (Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2)) < 30) {
+      if (x1 === 525 && y1 === 360) {
+        const placeholder = options.filter((o) => o !== "waldo");
+        setOptions(placeholder);
+        return true;
+      } else if (x1 === 624 && y1 === 357) {
+        const placeholder = options.filter((o) => o !== "wizard");
+        setOptions(placeholder);
+        return true;
+      }
+
+      const placeholder = options.filter((o) => o !== "odlaw");
+      setOptions(placeholder);
+      return true;
+    }
+  };
+
   const square = (e) => {
-    setClickedX(e.clientX + "px");
-    console.log(clickedX);
-    setClickedY(e.clientY + "px");
-    console.log(clickedY);
-    return (
-      <div
-        style={{
-          position: "absolute",
-          left: clickedX,
-          top: clickedY,
-          width: "100px",
-          height: "100px",
-          border: "5px solid black",
-        }}
-      ></div>
-    );
+    console.log("x:" + e.nativeEvent.offsetX + " y:" + e.nativeEvent.offsetY);
+    setDisplay("flex");
+    setClickedX(e.nativeEvent.offsetX);
+    setClickedXAbsolute(e.clientX - 20 + "px");
+    setClickedY(e.nativeEvent.offsetY);
+    setClickedYAbsolute(e.clientY - 20 + "px");
   };
 
   const addUser = async (e) => {
@@ -64,14 +76,52 @@ function App() {
 
   return (
     <div className="App">
-      <h1>Timer: {count} seconds</h1>
-      <p>Find Waldo!</p>
+      <h1>Where is Waldo?</h1>
+      <h3>Timer: {count} seconds</h3>
+      <h3>Missing: {options.join(", ")}</h3>
       <img
         className="waldo-image"
         src="https://jadenenz.github.io/wheres-waldo/static/media/waldo-beach.cd440f3b0de09b6c740f.jpg"
         alt="waldo"
         onClick={(e) => square(e)}
+        style={{ position: "relative" }}
       />
+      <div
+        style={{
+          display: display,
+          position: "absolute",
+          left: clickedXAbsolute,
+          top: clickedYAbsolute,
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <div
+          style={{ width: "40px", height: "40px", border: "2px solid black" }}
+        ></div>
+        <button
+          onClick={() =>
+            verifyIsThere(525, 360, Number(clickedX), Number(clickedY))
+          }
+        >
+          waldo
+        </button>
+        <button
+          onClick={() =>
+            verifyIsThere(245, 360, Number(clickedX), Number(clickedY))
+          }
+        >
+          odlaw
+        </button>
+        <button
+          onClick={() =>
+            verifyIsThere(624, 357, Number(clickedX), Number(clickedY))
+          }
+        >
+          wizard
+        </button>
+      </div>
+
       <Leaderboard newUser={setNewUser} userData={users} addUser={addUser} />
     </div>
   );
