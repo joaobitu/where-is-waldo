@@ -10,14 +10,16 @@ function App() {
   const [newUser, setNewUser] = useState("");
   const [count, setCount] = useState(0);
   const [clickedX, setClickedX] = useState("");
-  const [clickedXAbsolute, setClickedXAbsolute] = useState("");
   const [clickedY, setClickedY] = useState("");
-  const [clickedYAbsolute, setClickedYAbsolute] = useState("");
   const [display, setDisplay] = useState("none");
   const [modalDsiplay, setModalDisplay] = useState("none");
   const [options, setOptions] = useState(["waldo", "odlaw", "wizard"]);
+  const [visibility, setVisibility] = useState("block");
 
   useEffect(() => {
+    if (count === 0) {
+      getDB();
+    }
     if (options.length === 0) {
       displayLeaderboard();
       return;
@@ -36,22 +38,18 @@ function App() {
     return () => clearInterval(id);
   }, [count]);
 
-  useEffect(() => {
-    console.log("being called");
-    const getDB = async () => {
-      const data = await getDocs(usersReference);
-      setUsers(
-        data.docs.map((doc) => ({
-          ...doc.data(),
-          id: doc.id,
-        }))
-      );
-    };
-    getDB();
-  }, []);
+  const getDB = async () => {
+    const data = await getDocs(usersReference);
+    setUsers(
+      data.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      }))
+    );
+  };
 
   const verifyIsThere = (x1, y1, x2, y2) => {
-    if (Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2)) < 30) {
+    if (Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2)) < 25) {
       if (x1 === 525 && y1 === 360) {
         const placeholder = options.filter((o) => o !== "waldo");
         setOptions(placeholder);
@@ -72,9 +70,7 @@ function App() {
     console.log("x:" + e.nativeEvent.offsetX + " y:" + e.nativeEvent.offsetY);
     setDisplay("flex");
     setClickedX(e.nativeEvent.offsetX);
-    setClickedXAbsolute(e.clientX - 20 + "px");
     setClickedY(e.nativeEvent.offsetY);
-    setClickedYAbsolute(e.clientY - 20 + "px");
   };
 
   const addUser = async (e) => {
@@ -90,50 +86,59 @@ function App() {
       <h1>Where is Waldo?</h1>
       <h3>Timer: {count} seconds</h3>
       <h3>Missing: {options.join(", ")}</h3>
-      <img
-        className="waldo-image"
-        src="https://jadenenz.github.io/wheres-waldo/static/media/waldo-beach.cd440f3b0de09b6c740f.jpg"
-        alt="waldo"
-        onClick={(e) => square(e)}
-        style={{ position: "relative" }}
-      />
-      <div
-        style={{
-          display: display,
-          position: "absolute",
-          left: clickedXAbsolute,
-          top: clickedYAbsolute,
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
+
+      <div style={{ position: "relative" }}>
+        <img
+          className="waldo-image"
+          src="https://jadenenz.github.io/wheres-waldo/static/media/waldo-beach.cd440f3b0de09b6c740f.jpg"
+          alt="waldo"
+          onClick={(e) => square(e)}
+        />
         <div
-          style={{ width: "40px", height: "40px", border: "2px solid black" }}
-        ></div>
-        <button
-          onClick={() =>
-            verifyIsThere(525, 360, Number(clickedX), Number(clickedY))
-          }
+          style={{
+            display: display,
+            position: "absolute",
+            left: clickedX - 20 + "px",
+            top: clickedY - 20 + "px",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
         >
-          waldo
-        </button>
-        <button
-          onClick={() =>
-            verifyIsThere(245, 360, Number(clickedX), Number(clickedY))
-          }
-        >
-          odlaw
-        </button>
-        <button
-          onClick={() =>
-            verifyIsThere(624, 357, Number(clickedX), Number(clickedY))
-          }
-        >
-          wizard
-        </button>
+          <div
+            style={{ width: "40px", height: "40px", border: "2px solid black" }}
+          ></div>
+          <button
+            onClick={() =>
+              verifyIsThere(525, 360, Number(clickedX), Number(clickedY))
+            }
+          >
+            waldo
+          </button>
+          <button
+            onClick={() =>
+              verifyIsThere(245, 360, Number(clickedX), Number(clickedY))
+            }
+          >
+            odlaw
+          </button>
+          <button
+            onClick={() =>
+              verifyIsThere(624, 357, Number(clickedX), Number(clickedY))
+            }
+          >
+            wizard
+          </button>
+        </div>
       </div>
       <div id="leaderboard-modal" style={{ display: modalDsiplay }}>
-        <Leaderboard newUser={setNewUser} userData={users} addUser={addUser} />
+        <Leaderboard
+          newUser={setNewUser}
+          fetchData={getDB}
+          userData={users}
+          addUser={addUser}
+          visibility={visibility}
+          setVisibility={setVisibility}
+        />
       </div>
     </div>
   );

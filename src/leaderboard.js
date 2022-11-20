@@ -13,23 +13,38 @@ export const Leaderboard = (props) => {
       return 0;
     });
     return sortedUser.map((user, index) => {
-      return (
-        <div key={index}>
-          <h4>
-            {index + 1}: Name: {user.name}------------Time: {user.time}
-          </h4>
-        </div>
-      );
+      if (index < 10)
+        return (
+          <div key={index}>
+            <h4>
+              {index + 1}: Name: {user.name}------------Time: {user.time}
+            </h4>
+          </div>
+        );
     });
   };
 
   return (
     <div className="leaderboard-modal">
+      <h3>Add your score!</h3>
       <input
+        style={{ display: props.visibility }}
         placeholder="name"
-        onChange={(e) => props.newUser(e.target.value)}
+        onChange={(e) => {
+          props.newUser(e.target.value);
+        }}
       />
-      <button onClick={() => props.addUser()}>Create User</button>
+      <button
+        style={{ display: props.visibility }}
+        onClick={() => {
+          props.addUser();
+          props.fetchData();
+          props.setVisibility("none");
+        }}
+      >
+        Create User
+      </button>
+      <h1>TOP 10</h1>
       {displayLeaderboard()}
     </div>
   );
