@@ -12,18 +12,19 @@ export const Leaderboard = (props) => {
       }
       return 0;
     });
-    return sortedUser.map((user) => {
+    return sortedUser.map((user, index) => {
       return (
-        <div key={sortedUser.indexOf(user)}>
-          <h1>Name: {user.name}</h1>
-          <h1>Time: {user.time}</h1>
+        <div key={index}>
+          <h4>
+            {index + 1}: Name: {user.name}------------Time: {user.time}
+          </h4>
         </div>
       );
     });
   };
 
   return (
-    <div className="leaderboard-modal" style={{ display: "none" }}>
+    <div className="leaderboard-modal">
       <input
         placeholder="name"
         onChange={(e) => props.newUser(e.target.value)}

@@ -14,9 +14,15 @@ function App() {
   const [clickedY, setClickedY] = useState("");
   const [clickedYAbsolute, setClickedYAbsolute] = useState("");
   const [display, setDisplay] = useState("none");
+  const [modalDsiplay, setModalDisplay] = useState("none");
   const [options, setOptions] = useState(["waldo", "odlaw", "wizard"]);
 
   useEffect(() => {
+    if (options.length === 0) {
+      displayLeaderboard();
+      return;
+    }
+
     const timer = () => {
       setCount(count + 1);
     };
@@ -25,6 +31,7 @@ function App() {
     if (count > 1000) {
       return;
     }
+
     const id = setInterval(timer, 1000);
     return () => clearInterval(id);
   }, [count]);
@@ -74,6 +81,10 @@ function App() {
     await addDoc(usersReference, { name: newUser, time: count });
   };
 
+  const displayLeaderboard = () => {
+    setModalDisplay("flex");
+  };
+
   return (
     <div className="App">
       <h1>Where is Waldo?</h1>
@@ -121,8 +132,9 @@ function App() {
           wizard
         </button>
       </div>
-
-      <Leaderboard newUser={setNewUser} userData={users} addUser={addUser} />
+      <div id="leaderboard-modal" style={{ display: modalDsiplay }}>
+        <Leaderboard newUser={setNewUser} userData={users} addUser={addUser} />
+      </div>
     </div>
   );
 }
