@@ -5,3 +5,13 @@
   box-sizing: border-box;
 }
 
+.image-reference {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.image-reference img{
+  height: 100px;
+  width: auto;
+}

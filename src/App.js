@@ -85,7 +85,13 @@ function App() {
     <div className="App">
       <h1>Where is Waldo?</h1>
       <h3>Timer: {count} seconds</h3>
-      <h3>Missing: {options.join(", ")}</h3>
+
+      <div className="image-reference">
+        <img src="https://www.giantbomb.com/a/uploads/square_small/0/5973/545186-waldo2.jpg" />
+        <img src="https://www.giantbomb.com/a/uploads/square_small/4/46311/1333591-200px_character.odlaw.jpg" />
+        <img src="https://www.giantbomb.com/a/uploads/square_small/4/46311/1341868-wizard.gif" />
+        <h3>Missing: {options.join(", ")}</h3>
+      </div>
 
       <div style={{ position: "relative" }}>
         <img
@@ -130,6 +136,7 @@ function App() {
           </button>
         </div>
       </div>
+
       <div id="leaderboard-modal" style={{ display: modalDsiplay }}>
         <Leaderboard
           newUser={setNewUser}
